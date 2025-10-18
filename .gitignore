@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.ipynb_checkpoints/
+.env
+.venv
+venv/
+ENV/
+# macOS
+.DS_Store
+# IDE
+.vscode/
+.idea/
+# Data (keep structure, not big files)
+data/raw/
+data/interim/
+data/processed/
+# Models/experiments
+experiments/
+mlruns/
+*.parquet
+*.feather
+*.csv
+*.pkl
+*.joblib

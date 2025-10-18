@@ -1,0 +1,330 @@
+======================================================================
+Fantasy Football Projections - Simple Backtest
+======================================================================
+
+Loading data for seasons: [2023, 2024, 2025]
+Loading cached data from /Users/aneesshaikh/Python/ff_ppr/data/interim/weekly_stats_2023_2025.parquet
+Loaded 8,142 player-weeks
+
+Building features...
+Building features...
+  [START] Shape: 8,142 rows × 115 cols | Memory: 8.7 MB
+  → Rolling features...
+  [after_rolling] Shape: 8,142 rows × 136 cols | Memory: 10.0 MB
+  → Target/carry share...
+  [after_target_share] Shape: 8,142 rows × 145 cols | Memory: 10.5 MB
+  → Efficiency metrics...
+  [after_efficiency] Shape: 8,142 rows × 153 cols | Memory: 11.0 MB
+  → Opponent strength...
+  [after_opponent] Shape: 8,142 rows × 159 cols | Memory: 11.4 MB
+  → Team context...
+  [after_team_context] Shape: 8,142 rows × 159 cols | Memory: 11.4 MB
+  → Game context...
+  [after_game_context] Shape: 8,142 rows × 159 cols | Memory: 11.4 MB
+  → Position dummies...
+  [FINAL] Shape: 8,142 rows × 163 cols | Memory: 11.6 MB
+✓ Feature engineering complete: 43 features created
+Features built: 163 columns
+Using 43 features for modeling
+
+======================================================================
+Running Rolling Backtest
+======================================================================
+Starting rolling backtest with 8 week training window
+Total folds: 28
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[2]	valid_0's quantile: 0.877374
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[58]	valid_0's quantile: 3.19242
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[14]	valid_0's quantile: 1.80431
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[33]	valid_0's quantile: 0.758391
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[78]	valid_0's quantile: 2.57594
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[164]	valid_0's quantile: 1.54125
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[20]	valid_0's quantile: 0.711738
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[99]	valid_0's quantile: 2.49277
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[83]	valid_0's quantile: 1.56146
+  Progress: 5/28 folds completed
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[36]	valid_0's quantile: 0.742757
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[116]	valid_0's quantile: 2.46954
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[74]	valid_0's quantile: 1.52578
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[27]	valid_0's quantile: 0.664986
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[72]	valid_0's quantile: 1.90711
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[128]	valid_0's quantile: 1.0433
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[54]	valid_0's quantile: 0.731752
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[88]	valid_0's quantile: 2.30834
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[62]	valid_0's quantile: 1.24655
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[64]	valid_0's quantile: 0.721892
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[109]	valid_0's quantile: 2.2318
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[56]	valid_0's quantile: 1.38107
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[26]	valid_0's quantile: 0.66297
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[40]	valid_0's quantile: 2.1322
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[48]	valid_0's quantile: 1.2496
+  Progress: 10/28 folds completed
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[43]	valid_0's quantile: 0.671331
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[119]	valid_0's quantile: 2.21767
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[76]	valid_0's quantile: 1.21315
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[34]	valid_0's quantile: 0.666836
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[55]	valid_0's quantile: 2.04203
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[65]	valid_0's quantile: 1.1381
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[60]	valid_0's quantile: 0.65931
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[70]	valid_0's quantile: 2.02599
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[57]	valid_0's quantile: 1.19046
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[37]	valid_0's quantile: 0.71876
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[118]	valid_0's quantile: 2.22855
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[60]	valid_0's quantile: 1.40947
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[41]	valid_0's quantile: 0.692082
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[76]	valid_0's quantile: 2.13277
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[40]	valid_0's quantile: 1.23513
+  Progress: 15/28 folds completed
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[17]	valid_0's quantile: 0.710202
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[44]	valid_0's quantile: 2.23009
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[53]	valid_0's quantile: 1.30962
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[30]	valid_0's quantile: 0.786898
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[81]	valid_0's quantile: 2.38913
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[39]	valid_0's quantile: 1.35043
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[52]	valid_0's quantile: 0.719553
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[221]	valid_0's quantile: 2.08802
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[43]	valid_0's quantile: 1.19789
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[17]	valid_0's quantile: 0.710115
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[87]	valid_0's quantile: 2.25304
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[33]	valid_0's quantile: 1.24138
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[84]	valid_0's quantile: 0.810576
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[99]	valid_0's quantile: 2.34726
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[39]	valid_0's quantile: 1.52938
+  Progress: 20/28 folds completed
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[150]	valid_0's quantile: 0.712718
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[97]	valid_0's quantile: 2.06338
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[85]	valid_0's quantile: 1.18915
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[95]	valid_0's quantile: 0.679987
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[69]	valid_0's quantile: 2.10056
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[93]	valid_0's quantile: 1.14861
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[99]	valid_0's quantile: 0.744239
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[48]	valid_0's quantile: 2.20761
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[30]	valid_0's quantile: 1.08786
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[19]	valid_0's quantile: 0.68291
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[32]	valid_0's quantile: 2.31994
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[21]	valid_0's quantile: 1.37921
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[33]	valid_0's quantile: 0.719112
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[84]	valid_0's quantile: 2.27899
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[33]	valid_0's quantile: 1.3411
+  Progress: 25/28 folds completed
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[23]	valid_0's quantile: 0.656356
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[98]	valid_0's quantile: 2.05231
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[71]	valid_0's quantile: 1.29346
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[59]	valid_0's quantile: 0.671226
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[88]	valid_0's quantile: 2.13273
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[44]	valid_0's quantile: 1.38508
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[133]	valid_0's quantile: 0.716147
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[119]	valid_0's quantile: 2.11702
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[51]	valid_0's quantile: 1.31902
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[46]	valid_0's quantile: 0.650577
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[50]	valid_0's quantile: 2.16791
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[40]	valid_0's quantile: 1.29487
+
+============================================================
+Backtest Results
+============================================================
+Coverage_80                        0.7454
+Interval_Width                    13.6418
+MAE                                4.5189
+QB_Coverage                        0.7220
+QB_MAE                             6.5429
+QB_RMSE                            8.3085
+RB_Coverage                        0.7587
+RB_MAE                             4.4285
+RB_RMSE                            6.4405
+RMSE                               6.4471
+TE_Coverage                        0.7434
+TE_MAE                             3.5501
+TE_RMSE                            5.0759
+WR_Coverage                        0.7445
+WR_MAE                             4.5149
+WR_RMSE                            6.4902
+============================================================
+
+======================================================================
+Backtest Complete!
+======================================================================
+
+Results saved to: experiments/gbm_20251016_205944
+Predictions shape: (7801, 8)
+
+Metrics:
+  Coverage_80                   0.7454
+  Interval_Width               13.6418
+  MAE                           4.5189
+  QB_Coverage                   0.7220
+  QB_MAE                        6.5429
+  QB_RMSE                       8.3085
+  RB_Coverage                   0.7587
+  RB_MAE                        4.4285
+  RB_RMSE                       6.4405
+  RMSE                          6.4471
+  TE_Coverage                   0.7434
+  TE_MAE                        3.5501
+  TE_RMSE                       5.0759
+  WR_Coverage                   0.7445
+  WR_MAE                        4.5149
+  WR_RMSE                       6.4902
+
+======================================================================

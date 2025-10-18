@@ -1,0 +1,11 @@
+Output directory: /Users/aneesshaikh/Python/ff_ppr/experiments/gbm_20251016_204835
+Loading cached features from /Users/aneesshaikh/Python/ff_ppr/data/processed/features_2023_2025.parquet
+
+Using 43 features
+
+============================================================
+Running Rolling Backtest
+============================================================
+Starting rolling backtest with 8 week training window
+Backtest:   0%|          | 0/28 [00:00<?, ?it/s]/usr/local/Cellar/python@3.12/3.12.9/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/resource_tracker.py:255: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

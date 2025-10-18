@@ -1,0 +1,112 @@
+======================================================================
+Fantasy Football Projections - Working Example
+======================================================================
+
+1. Loading NFL data...
+Downloading weekly stats for seasons [2024, 2025]...
+Cached data to /Users/aneesshaikh/Python/ff_ppr/data/interim/weekly_stats_2024_2025.parquet
+   Loaded 8,184 player-weeks
+
+2. Building features...
+Building features...
+  [START] Shape: 8,184 rows × 115 cols | Memory: 8.7 MB
+  → Rolling features...
+  [after_rolling] Shape: 8,184 rows × 136 cols | Memory: 10.0 MB
+  → Target/carry share...
+  [after_target_share] Shape: 8,184 rows × 145 cols | Memory: 10.5 MB
+  → Efficiency metrics...
+  [after_efficiency] Shape: 8,184 rows × 153 cols | Memory: 11.0 MB
+  → Opponent strength...
+  [after_opponent] Shape: 8,184 rows × 159 cols | Memory: 11.4 MB
+  → Team context...
+  [after_team_context] Shape: 8,184 rows × 159 cols | Memory: 11.4 MB
+  → Game context...
+  [after_game_context] Shape: 8,184 rows × 159 cols | Memory: 11.4 MB
+  → Position dummies...
+  [FINAL] Shape: 8,184 rows × 163 cols | Memory: 11.7 MB
+✓ Feature engineering complete: 43 features created
+   Created 43 features
+   Memory usage: 11.7 MB
+
+3. Splitting data...
+   Training samples: 6,123
+   Validation samples: 2,061
+
+4. Training GBM Quantile Ensemble...
+   (This may take 2-3 minutes)
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[36]	train's quantile: 0.672093	valid's quantile: 0.685949
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[63]	train's quantile: 1.8834	valid's quantile: 2.18582
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[63]	train's quantile: 0.969551	valid's quantile: 1.30973
+   ✓ Training complete!
+
+5. Evaluating on validation set...
+   MAE: 4.37 fantasy points
+   RMSE: 6.19 fantasy points
+   Coverage (80%): 75.1%
+   Interval Width: 13.46 points
+
+6. Generating predictions for Week 1, 2025...
+
+   Top 20 Predictions:
+ player_id position  actual  pred_q10  pred_q50  pred_q90
+00-0039910       QB   20.12  6.346863 20.292469 31.233657
+00-0036223       RB   12.80  5.689175 19.884204 32.941973
+00-0034857       QB   38.76  5.728203 18.781985 29.544860
+00-0034796       QB   29.36  6.293255 18.491671 27.691846
+00-0033873       QB   26.02  6.089635 17.573282 25.205797
+00-0036389       QB   24.28  5.543484 17.474149 31.121913
+00-0034844       RB   18.40  5.993398 17.339810 29.242550
+00-0035228       QB   18.32  5.526610 17.067070 29.394811
+00-0037834       QB   16.78  5.454364 16.739334 25.548442
+00-0039894       WR    0.00  4.849591 16.609122 21.798643
+00-0034855       QB   22.58  4.378393 16.598877 24.195469
+00-0039893       WR    9.00  4.740492 16.437775 24.635567
+00-0039915       WR   13.40  4.847829 16.342640 24.165049
+00-0038542       RB   24.40  5.985645 16.129195 27.955679
+00-0036900       WR    4.60  4.886414 16.127886 21.262175
+00-0039139       RB   15.00  5.935823 15.957119 30.135862
+00-0026498       QB   13.60  5.194595 15.953586 20.226876
+00-0036442       QB    8.82  5.417590 15.897852 23.496190
+00-0039361       RB   14.50  5.616856 15.874779 21.162921
+00-0036358       WR   18.00  4.010301 15.839601 27.316875
+
+7. Performance by Position:
+   QB: MAE = 7.41 (n=34)
+   RB: MAE = 3.59 (n=96)
+   WR: MAE = 4.09 (n=149)
+   TE: MAE = 3.12 (n=77)
+
+8. Top 10 Most Important Features:
+                 feature  importance
+          f_fp_ppr_roll5 4917.766846
+          f_fp_ppr_roll3  464.714031
+       f_target_share_5w  434.201098
+ f_opp_fp_allowed_pos_5w  347.381586
+          f_fp_ppr_roll1  321.399407
+       f_target_share_3w  297.460715
+       f_target_share_1w  290.840796
+f_opp_strength_vs_avg_5w  277.837477
+ f_opp_fp_allowed_pos_3w  277.373205
+f_opp_strength_vs_avg_3w  277.002977
+
+======================================================================
+✓ Pipeline Complete!
+======================================================================
+
+Key Takeaways:
+  • Feature engineering works correctly (no memory issues)
+  • Model training works (single-threaded, stable)
+  • Predictions are reasonable
+  • Ready for production use!
+
+Next Steps:
+  • Use this pattern for your predictions
+  • Train on more seasons if needed
+  • Integrate into your draft/lineup tools
+======================================================================
