@@ -11,7 +11,10 @@ from .config import (
     PROCESSED_DATA_DIR, EXPERIMENTS_DIR, TRAIN_SEASONS,
     POSITIONS, RANDOM_SEED
 )
-from .utils import set_random_seed, split_train_val_test
+from .utils import (
+    set_random_seed, split_train_val_test,
+    get_current_season_and_week, remaining_games
+)
 from .data import load_weekly_stats
 from .features import build_all_features, select_feature_columns
 from .models_gbm import GBMQuantileEnsemble
@@ -138,6 +141,149 @@ def train_gbm_model(
     return model
 
 
+def predict_adaptive(
+    df: pd.DataFrame,
+    feature_cols: list,
+    output_path: Path = None
+) -> pd.DataFrame:
+    """
+    Adaptive prediction for upcoming NFL week.
+
+    Determines what to predict based on current day and game schedule:
+    - If mid-week with games in progress: predict current week, only remaining games
+    - If Tuesday after MNF: predict next week, all players
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Full dataset with features
+    feature_cols : list
+        Feature column names
+    output_path : Path, optional
+        Path to save predictions
+
+    Returns
+    -------
+    pd.DataFrame
+        Predictions for upcoming games
+    """
+    print("\n" + "="*60)
+    print("Adaptive Weekly Prediction")
+    print("="*60)
+
+    # Get current NFL week context
+    season, latest_done_wk, in_progress_week, reg_sched = get_current_season_and_week()
+
+    print(f"Current season: {season}")
+    print(f"Latest completed week: {latest_done_wk}")
+    print(f"In-progress week: {in_progress_week}")
+
+    # Determine target week and players
+    if in_progress_week is not None:
+        # Mid-week: predict current week, only remaining games
+        target_week = in_progress_week
+        print(f"\n→ Week {target_week} is in progress")
+        print("→ Predicting only games that haven't kicked off")
+
+        # Get remaining games
+        remaining = remaining_games(season, target_week, reg_sched)
+        remaining_teams = set()
+        for _, game in remaining.iterrows():
+            if 'home_team' in game and pd.notna(game['home_team']):
+                remaining_teams.add(game['home_team'])
+            if 'away_team' in game and pd.notna(game['away_team']):
+                remaining_teams.add(game['away_team'])
+
+        print(f"→ {len(remaining)} games remaining ({len(remaining_teams)} teams)")
+
+    else:
+        # Tuesday after MNF: predict next week, all players
+        target_week = latest_done_wk + 1
+        print(f"\n→ All games completed through week {latest_done_wk}")
+        print(f"→ Predicting next week: {target_week}")
+        remaining_teams = None  # All teams
+
+    # Anti-leakage: only use data up to latest_done_wk for training
+    print(f"\n→ Using data through week {latest_done_wk} for features (anti-leakage)")
+    train_df = df[
+        (df['season'] < season) |
+        ((df['season'] == season) & (df['week'] <= latest_done_wk))
+    ].copy()
+
+    # Use recent weeks for validation
+    val_cutoff_week = max(1, latest_done_wk - 2)
+    val_df = train_df[
+        (train_df['season'] == season) &
+        (train_df['week'] >= val_cutoff_week)
+    ].copy()
+
+    print(f"Training samples: {len(train_df)}")
+    print(f"Validation samples: {len(val_df)} (weeks {val_cutoff_week}-{latest_done_wk})")
+
+    # Train model
+    X_train = train_df[feature_cols].fillna(0)
+    y_train = train_df['fp_ppr']
+    X_val = val_df[feature_cols].fillna(0)
+    y_val = val_df['fp_ppr']
+
+    print("\nTraining GBM quantile ensemble...")
+    model = GBMQuantileEnsemble(verbose=True)
+    model.train(X_train, y_train, X_val, y_val)
+
+    # Get prediction candidates from most recent week's data
+    # Use latest_done_wk data as template for player pool
+    prediction_df = df[
+        (df['season'] == season) &
+        (df['week'] == latest_done_wk)
+    ].copy()
+
+    # Filter to remaining teams if mid-week
+    if remaining_teams is not None:
+        prediction_df = prediction_df[prediction_df['team'].isin(remaining_teams)]
+
+    print(f"\n→ Generating predictions for {len(prediction_df)} player-weeks")
+
+    # Generate predictions
+    X_pred = prediction_df[feature_cols].fillna(0)
+    preds = model.predict(X_pred)
+
+    # Create output dataframe
+    output_df = pd.DataFrame({
+        'season': season,
+        'week': target_week,
+        'player_id': prediction_df['player_id'].values,
+        'player_name': prediction_df['player_name'].values if 'player_name' in prediction_df else None,
+        'position': prediction_df['position'].values,
+        'team': prediction_df['team'].values if 'team' in prediction_df else None,
+        'opponent': prediction_df['opponent'].values if 'opponent' in prediction_df else None,
+        'q10': preds['q10'],
+        'q50': preds['q50'],
+        'q90': preds['q90']
+    })
+
+    # Sort by projection (q50) descending
+    output_df = output_df.sort_values('q50', ascending=False).reset_index(drop=True)
+
+    # Save if output path provided
+    if output_path:
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        write_parquet(output_df, output_path)
+        print(f"\n✓ Predictions saved to: {output_path}")
+
+    # Print summary
+    print("\n" + "="*60)
+    print("Prediction Summary")
+    print("="*60)
+    print(f"Target: {season} Week {target_week}")
+    print(f"Players: {len(output_df)}")
+    print(f"Positions: {output_df['position'].value_counts().to_dict()}")
+    print("\nTop 10 Projections (PPR):")
+    print(output_df[['player_name', 'position', 'team', 'q10', 'q50', 'q90']].head(10).to_string(index=False))
+    print("="*60)
+
+    return output_df
+
+
 def main():
     """Main training script."""
     parser = argparse.ArgumentParser(description="Train fantasy football projection models")
@@ -183,6 +329,11 @@ def main():
         default=RANDOM_SEED,
         help='Random seed'
     )
+    parser.add_argument(
+        '--predict-adaptive',
+        action='store_true',
+        help='Generate adaptive predictions for upcoming NFL week'
+    )
 
     args = parser.parse_args()
 
@@ -202,6 +353,26 @@ def main():
     # Save config
     config = vars(args)
     save_json(config, output_dir / "config.json")
+
+    # Handle adaptive prediction mode
+    if args.predict_adaptive:
+        # Load all available data for adaptive prediction
+        all_seasons = [2022, 2023, 2024, 2025]
+        df = prepare_data(all_seasons, rebuild_features=args.rebuild_features)
+
+        # Select features
+        feature_cols = select_feature_columns(df)
+        print(f"\nUsing {len(feature_cols)} features")
+
+        # Generate adaptive predictions
+        output_file = PROCESSED_DATA_DIR / "preds_upcoming_week.parquet"
+        predictions_df = predict_adaptive(df, feature_cols, output_path=output_file)
+
+        print("\n" + "="*60)
+        print("Adaptive prediction complete!")
+        print(f"Results saved to: {output_file}")
+        print("="*60)
+        return
 
     # Load and prepare data
     all_seasons = args.seasons + [args.val_season]

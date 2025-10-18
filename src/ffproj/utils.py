@@ -6,6 +6,9 @@ import pandas as pd
 import random
 from typing import Optional
 import torch
+from datetime import datetime
+import pytz
+import nflreadpy as nfl
 
 
 def set_random_seed(seed: int = 42) -> None:
@@ -291,3 +294,113 @@ def clip_outliers(
     lower = series.quantile(lower_percentile)
     upper = series.quantile(upper_percentile)
     return series.clip(lower, upper)
+
+
+# ==============================================================================
+# Adaptive Weekly Prediction Utilities
+# ==============================================================================
+
+ET = pytz.timezone("America/New_York")
+
+
+def nfl_now_et() -> datetime:
+    """
+    Get current time in Eastern Time (NFL's timezone).
+
+    Returns
+    -------
+    datetime
+        Current datetime in ET with timezone info
+    """
+    return datetime.now(tz=ET)
+
+
+def get_current_season_and_week() -> tuple:
+    """
+    Determine current NFL season, latest completed week, and in-progress week.
+
+    Uses game schedule to determine:
+    - Current season
+    - Latest completed week (all games have results)
+    - In-progress week (some games started but not all finished)
+
+    Returns
+    -------
+    tuple
+        (season, latest_done_week, in_progress_week, schedule_df)
+        - season: int, current NFL season year
+        - latest_done_week: int, last week where all games finished
+        - in_progress_week: int or None, week currently being played (if any)
+        - schedule_df: pd.DataFrame, full regular season schedule
+    """
+    # Load current season schedule (use 2024 as current season)
+    # nflreadpy requires integer seasons, not "current"
+    current_season = 2024
+    sched = nfl.load_schedules(seasons=[current_season])
+
+    # Convert to pandas for easier manipulation
+    reg = sched.filter(sched["game_type"] == "REG").to_pandas()
+
+    # Get latest season
+    season = int(reg["season"].max())
+
+    # Find latest completed week (all games have results)
+    finished = reg[reg["result"].notna()]
+    latest_done_wk = int(finished["week"].max()) if len(finished) > 0 else 0
+
+    # Check if current week is in progress
+    now = nfl_now_et()
+    in_progress_week = None
+
+    # Check if any games in the next week have started
+    candidate_week = latest_done_wk + 1
+    if candidate_week <= 18:  # Regular season is weeks 1-18
+        week_games = reg[reg["week"] == candidate_week].copy()
+        if len(week_games) > 0:
+            # Convert game times to ET
+            week_games["start_et"] = pd.to_datetime(
+                week_games["gameday"], errors="coerce"
+            ).dt.tz_localize(ET)
+
+            # Check if any game has started
+            started = week_games[week_games["start_et"] <= now]
+            # Check if all games are finished
+            all_finished = week_games["result"].notna().all()
+
+            if len(started) > 0 and not all_finished:
+                in_progress_week = candidate_week
+
+    return season, latest_done_wk, in_progress_week, reg
+
+
+def remaining_games(season: int, week: int, reg_sched: pd.DataFrame) -> pd.DataFrame:
+    """
+    Get games that haven't kicked off yet for a given week.
+
+    Parameters
+    ----------
+    season : int
+        NFL season year
+    week : int
+        Week number
+    reg_sched : pd.DataFrame
+        Regular season schedule from nflreadpy
+
+    Returns
+    -------
+    pd.DataFrame
+        Games in the specified week that haven't kicked off yet
+    """
+    now = nfl_now_et()
+
+    # Filter to specified week
+    wk = reg_sched[
+        (reg_sched["season"] == season) &
+        (reg_sched["week"] == week)
+    ].copy()
+
+    # Convert game times to ET
+    wk["start_et"] = pd.to_datetime(wk["gameday"], errors="coerce").dt.tz_localize(ET)
+
+    # Return only games that haven't started
+    return wk[wk["start_et"] > now]
