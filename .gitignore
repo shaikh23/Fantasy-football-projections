@@ -1,28 +1,42 @@
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.egg-info/
-.ipynb_checkpoints/
-.env
-.venv
+*.py[cod]
+*$py.class
+*.so
+.Python
 venv/
-ENV/
-# macOS
-.DS_Store
+env/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
 # IDE
 .vscode/
 .idea/
-# Data (keep structure, not big files)
-data/raw/
-data/interim/
-data/processed/
-# Models/experiments
-experiments/
-mlruns/
-*.parquet
-*.feather
-*.csv
-*.pkl
-*.joblib
+*.swp
+*.swo
+*~
+
+# Data (large files - don't commit to git)
+data/interim/*.parquet
+data/raw/*.csv
+data/raw/*.parquet
+
+# Models (large files)
+experiments/*/backtest_predictions.parquet
+models/*.pkl
+
+# Logs
+*.log
+backtest_*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
